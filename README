@@ -1,59 +1,59 @@
 componentjs is a simple module for browser based component development.
 
 brief usage examples:
-<!DOCTYPE html>
-<html>
-	<body>
-		<script type="component" source="component/loggedbox" id="loggedbox"></script>
+	<!DOCTYPE html>
+	<html>
+		<body>
+			<script type="component" source="component/loggedbox" id="loggedbox"></script>
 		
-		<div id="page">
+			<div id="page">
 			
-		    <script type="component" source="component/controlmenu" id="controlmenu"></script>
-		    <script type="component" source="component/search" id="searchbox"></script>
-		    
-		</div>
-	</body>
-</html>
+				<script type="component" source="component/controlmenu" id="controlmenu"></script>
+				<script type="component" source="component/search" id="searchbox"></script>
+				
+			</div>
+		</body>
+	</html>
 
 component example:
-<div class='rootdiv'>
-	<script>
-	//<![CDATA[
-		console.log(this.getAttribute('class')); // output: rootdiv
-	//]]>
-	</script>
-	<div id="child">
+	<div class='rootdiv'>
 		<script>
 		//<![CDATA[
-			console.log(this.getAttribute('id')); // output: child
+			console.log(this.getAttribute('class')); // output: rootdiv
+		//]]>
+		</script>
+		<div id="child">
+			<script>
+			//<![CDATA[
+				console.log(this.getAttribute('id')); // output: child
+			//]]>
+			</script>
+		</div>
+		<div>
+			<div id="innerchild">
+			</div>
+		</div>
+		<script type="component" source="component/loginbox">
+		//<![CDATA[
+			console.log(this); // output: a component/loginbox domElement
+		//]]>		
+		</script>
+		<script>
+		//<![CDATA[
+			console.log(this.child.getAttribute('id')); // output: child
+			console.log(this.innerchild); // output: undefined, due the fact that the id is not immediate child of rootdir
 		//]]>
 		</script>
 	</div>
-	<div>
-		<div id="innerchild">
-		</div>
-	</div>
-	<script type="component" source="component/loginbox">
-	//<![CDATA[
-		console.log(this); // output: a component/loginbox domElement
-	//]]>		
-	</script>
-	<script>
-	//<![CDATA[
-		console.log(this.child.getAttribute('id')); // output: child
-		console.log(this.innerchild); // output: undefined, due the fact that the id is not immediate child of rootdir
-	//]]>
-	</script>
-</div>
 
 Other usages and possibilities:
 - execute script at given path
-<script type="component-code" source="pathToFileWithoutExtension" /> == executes pathToFileWithoutExtension.js script where 'this' is the parent of the inlined script component-code.
+	<script type="component-code" source="pathToFileWithoutExtension" /> == executes pathToFileWithoutExtension.js script where 'this' is the parent of the inlined script component-code.
 
 - inline javascript within component's html code (experimental)
 
-<div>
-  <a href="[%=returnLinkHref(1);]">[%=returnLinkTitle(2)]<a/>
-  <script type="component-code" source="components/linkdetails" />
-  <script src="ttp://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" />
-</div>
+	<div>
+	  <a href="[%=returnLinkHref(1);]">[%=returnLinkTitle(2)]<a/>
+	  <script type="component-code" source="components/linkdetails" />
+	  <script src="ttp://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" />
+	</div>
