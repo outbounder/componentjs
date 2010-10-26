@@ -1,6 +1,25 @@
-componentjs is a simple module for browser based component development.
+# componentjs is a simple module for browser based component development. #
+## Features ##
 
-brief usage examples:
+* Visual component based development of web applications
+* Component implementation using _templates_ and _code-behind_ 
+* Optimized to run on every browser
+* Compose complex web application user interfaces with nested components
+* runtime component compile and presentation
+* integrated component caching (because of the above)
+* works with any kind of html entities 
+* javascript helper methods using synch and asynch component loading
+
+## Limits ##
+* every component implementation must have only a single root tag
+* components can be loaded only under on cross-domain restrictions
+* runtime error reporting is limited to the component file path but not including the line.
+
+## Good to be known ##
+* Place component javascript code within `<script>//<![CDATA[` and `//]]></script>` so that the browser's xml parser can do its job nice.
+
+##  brief usage examples ##
+
     <!DOCTYPE html>
     <html>
 	    <body>
@@ -15,7 +34,7 @@ brief usage examples:
 	    </body>
     </html>
 
-component example:
+## component implementation example ##
     <div class='rootdiv'>
 	    <script>
 	    //<![CDATA[
@@ -46,13 +65,13 @@ component example:
 	    </script>
     </div>
 
-Other usages and possibilities:
-- execute script at given path
+## Other usages and possibilities ##
+### execute script at given path ###
     // executes pathToFileWithoutExtension.js script where 'this' is the parent of the inlined script component-code.
     <script type="component-code" source="pathToFileWithoutExtension" /> 
     
 
-- inline javascript within component's html code (experimental)
+### inline javascript within component's html code (experimental) ###
     <div>
       <a href="[%=returnLinkHref(1);]">[%=returnLinkTitle(2)]<a/>
       <script type="component-code" source="components/linkdetails" />
