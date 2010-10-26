@@ -9,11 +9,13 @@
 * integrated component caching (because of the above)
 * works with any kind of html entities 
 * javascript helper methods using synch and asynch component loading
+* fits well with jquery, prorotype, mooTools and any other.
 
 ## Limits ##
 * every component implementation must have only a single root tag
 * components can be loaded only under on cross-domain restrictions
 * runtime error reporting is limited to the component file path but not including the line.
+* every component is first loaded at runtime, no support for minifying of web application based on components yet.
 
 ## Good to be known ##
 * Place component javascript code within `<script>//<![CDATA[` and `//]]></script>` so that the browser's xml parser can do its job nice.
@@ -77,3 +79,49 @@
       <script type="component-code" source="components/linkdetails" />
       <script src="ttp://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" />
     </div>
+    
+### using inline component templating ###
+component templating is done using EJS (http://www.embeddedjs.com/). There is extender script of the componentjs
+which simply pipes the raw component text code to EJS and then again constructs component dom element instance from it.
+
+Typical implementation of component with EJS looks like
+    <div>
+        <p>[%=this.getTitle()%]</p>
+        <ul>
+        [% for(var i=0; i<supplies.length; i++) {%]
+           <li>[%= supplies[i] %]</li>
+        [% } %]
+        </ul>
+    </div>
+    
+### using component events ###
+component eventing is added as generic methods using componentjs extender script 'emitter'.
+
+Typical implementation of component who emits even look like
+    <div>
+        <script>
+        //<![CDATA[
+            this.startLoadingAssets = function() {
+                this.emit("loading", "assets"); // method signature emit(eventName, eventData)
+            }
+        //]]>
+        </script>
+    </div>
+    
+Typical implementation of component who listens for events
+    <div>
+        <script type="component" source="components/componentEmiter" id="emitter" />
+        <script>
+            // method signature on(eventName, eventHandler)
+            this.emitter.on("loading", function(data) {
+                console.log(data); // output: "assets"
+            });
+        </script>
+    </div>
+    
+## TODO/ROADMAP ##
+* rewrite componentjs implementation so that it can be extended a lot more easily
+* write down full stack of functional and unit tests
+* improve error and exception reporting
+* provide backend component generation, ie do not load components at runtime but leave the backend to serve all the 
+components in one request.
