@@ -92,12 +92,13 @@ Component = function() {
 
 	// private space execution
 	Component.wrapPathToElement = function(context) {
-
-		if (componentCacheCollection[context.path + ".html"] !== undefined) {
+		if (typeof componentCacheCollection[context.path + ".html"] !== 'undefined') {
 			context.data = componentCacheCollection[context.path + ".html"];
+			if(context.verbose)
+				console.log('from cache '+context.data);
 			return Component.handleResponse(context);
 		}
-
+		
 		var req = new XMLHttpRequest();
 
 		if (typeof context.async === "function") {
@@ -108,23 +109,30 @@ Component = function() {
 						componentCacheCollection[context.path + ".html"] = req.responseText;
 
 						context.data = req.responseText;
+						if(context.verbose)
+							console.log('data async:'+context.data);
 						Component.handleResponse(context);
-					} else
+					} else if (req.status == 404)
 						throw new Error("component not found "+context.path+".html",context.path+".html");
 				}
 			};
 
 			req.send(null); // null because of FF3.0
 		} else {
+			
 			req.open("GET", context.path + ".html", false);
 			req.send(null); // null because of FF3.0
-			if (req.status == 200 || req.status == 304) {
+			if (req.status == 200 || req.status == 304 || req.status == 0 ) { // status == 0 is google chrom default response (?)
 				componentCacheCollection[context.path + ".html"] = req.responseText;
 
 				context.data = req.responseText;
+				if(context.verbose)
+					console.log('data sync:'+context.data);
 				return Component.handleResponse(context);
-			} else
+			} else if(req.status == 404)
 				throw new Error("component not found "+context.path+".html",context.path+".html");
+			else
+				throw new Error(req.status+" "+req.responseText);
 		}
 	};
 
