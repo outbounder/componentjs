@@ -1,4 +1,6 @@
 # componentjs is a simple module for browser based component development. #
+the code is a fork from flashjs project http://code.google.com/p/flashjs/
+
 ## Features ##
 
 * Visual component based development of web applications
@@ -10,15 +12,21 @@
 * works with any kind of html entities 
 * javascript helper methods using synch and asynch component loading
 * fits well with jquery, prorotype, mooTools and any other.
+* supports dom element and attribute namespaces (thus runs smooth with SVG files)
 
 ## Limits ##
 * every component implementation must have only a single root tag
-* components can be loaded only under on cross-domain restrictions
+* components can be loaded only under on cross-domain restrictions (but there are workarounds)
 * runtime error reporting is limited to the component file path but not including the line.
 * every component is first loaded at runtime, no support for minifying of web application based on components yet.
 
 ## Good to be known ##
 * Place component javascript code within `<script>//<![CDATA[` and `//]]></script>` so that the browser's xml parser can do its job nice.
+
+## Examples ##
+
+* http://vn.east.fi/svgtest/
+* http://outbounder.github.com/simpleui-techbrowser/www/index.html
 
 ##  brief usage examples ##
 

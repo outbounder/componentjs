@@ -89,42 +89,58 @@ Component = function() {
 			}
 		}
 	};
+	
+	Component.getExtension = function(path) {
+		if(path.lastIndexOf(".") == path.length-4)
+			return "";
+		return "html";
+	};
 
 	// private space execution
 	Component.wrapPathToElement = function(context) {
-
-		if (componentCacheCollection[context.path + ".html"] !== undefined) {
-			context.data = componentCacheCollection[context.path + ".html"];
+		var extension = Component.getExtension(context.path);
+		
+		if (typeof componentCacheCollection[context.path + extension] !== 'undefined') {
+			context.data = componentCacheCollection[context.path + extension];
+			if(context.verbose)
+				console.log('from cache '+context.data);
 			return Component.handleResponse(context);
 		}
-
+		
 		var req = new XMLHttpRequest();
 
 		if (typeof context.async === "function") {
-			req.open("GET", context.path + ".html", true);
+			req.open("GET", context.path + extension, true);
 			req.onreadystatechange = function() {
 				if (req.readyState == 4) {
 					if (req.status == 200 || req.status == 304) {
-						componentCacheCollection[context.path + ".html"] = req.responseText;
+						componentCacheCollection[context.path + extension] = req.responseText;
 
 						context.data = req.responseText;
+						if(context.verbose)
+							console.log('data async:'+context.data);
 						Component.handleResponse(context);
-					} else
-						throw new Error("component not found "+context.path+".html",context.path+".html");
+					} else if (req.status == 404)
+						throw new Error("component not found "+context.path+extension,context.path+extension);
 				}
 			};
 
 			req.send(null); // null because of FF3.0
 		} else {
-			req.open("GET", context.path + ".html", false);
+			
+			req.open("GET", context.path + extension, false);
 			req.send(null); // null because of FF3.0
-			if (req.status == 200 || req.status == 304) {
-				componentCacheCollection[context.path + ".html"] = req.responseText;
+			if (req.status == 200 || req.status == 304 || req.status == 0 ) { // status == 0 is google chrom default response (?)
+				componentCacheCollection[context.path + extension] = req.responseText;
 
 				context.data = req.responseText;
+				if(context.verbose)
+					console.log('data sync:'+context.data);
 				return Component.handleResponse(context);
-			} else
-				throw new Error("component not found "+context.path+".html",context.path+".html");
+			} else if(req.status == 404)
+				throw new Error("component not found "+context.path+extension,context.path+extension);
+			else
+				throw new Error(req.status+" "+req.responseText);
 		}
 	};
 
@@ -188,7 +204,8 @@ Component = function() {
 		if (node.nodeName == "script" && node.getAttribute("type") === "component-code") {
 			
 			Component.executeScriptFromPath(parentDomNode, node.getAttribute("source"));
-			Component.executeScript(parentDomNode, node, context.path+".html");
+			var extension = Component.getExtension(context.path);
+			Component.executeScript(parentDomNode, node, context.path+extension);
 			
 			return null;
 		} else if (node.nodeName == "script" && node.getAttribute("src") !== null) {
@@ -199,7 +216,8 @@ Component = function() {
 				script.setAttribute("id", node.getAttribute("id"));
 
 			if (node.childNodes.length != 0) // text or cdata
-				Component.executeScript(script, node, context.path+".html");
+				var extension = Component.getExtension(context.path);
+				Component.executeScript(script, node, context.path+extension);
 
 			return script;
 		} else if (node.nodeName == "script" && node.getAttribute("source") !== null) {
@@ -213,24 +231,26 @@ Component = function() {
 				parentDomNode[node.getAttribute("id")] = element;
 
 			if (node.childNodes.length != 0) // text or cdata
-				Component.executeScript(element, node, context.path+".html");
+				var extension = Component.getExtension(context.path);
+				Component.executeScript(element, node, context.path+extension);
 
 			return element;
 		} else if (node.nodeName == "script" && node.getAttribute("source") === null) {
-			
-			Component.executeScript(parentDomNode, node, context.path+".html");
+			var extension = Component.getExtension(context.path);
+			Component.executeScript(parentDomNode, node, context.path+extension);
 			return null;
 		} else { // apply the node as it is by traversing its childs
-			var e = document.createElement(node.nodeName);
+			var e = document.createElementNS(node.namespaceURI, node.nodeName); // TODO???
 
 			if (id)
 				e.setAttribute('id', id);
 
 			if (typeof node.attributes !== "undefined"
 					&& node.attributes !== null)
-				for ( var i = 0; i < node.attributes.length; i++)
-					e.setAttribute(node.attributes[i].name,
+				for ( var i = 0; i < node.attributes.length; i++) {
+					e.setAttributeNS(node.attributes[i].namespaceURI, node.attributes[i].name,
 							node.attributes[i].value);
+				}
 
 			for ( var i = 0; i < node.childNodes.length; i++) {
 
