@@ -12,7 +12,8 @@ the code is a fork from flashjs project http://code.google.com/p/flashjs/
 * works with any kind of html entities 
 * javascript helper methods using synch and asynch component loading
 * fits well with jquery, prorotype, mooTools and any other.
-* supports dom element and attribute namespaces (thus runs smooth with SVG files)
+* supports dom element and attribute namespaces, ie gives support to load & use SVG files
+* auto appends link elements to head, ie makes components style independent
 
 ## Limits ##
 * every component implementation must have only a single root tag
@@ -27,6 +28,12 @@ the code is a fork from flashjs project http://code.google.com/p/flashjs/
 
 * http://vn.east.fi/svgtest/
 * http://outbounder.github.com/simpleui-techbrowser/www/index.html
+
+## usage ##
+   <body class="body">
+     <script type="component" source="searchBox"></script>	
+     <script src="./componentjs/component.js?overrideCurrent"></script>
+   </body>
 
 ##  brief usage examples ##
 

@@ -93,7 +93,7 @@ Component = function() {
 	Component.getExtension = function(path) {
 		if(path.lastIndexOf(".") == path.length-4)
 			return "";
-		return "html";
+		return ".html";
 	};
 
 	// private space execution
@@ -201,7 +201,17 @@ Component = function() {
 	};
 
 	Component.wrapToElement = function(node, id, parentDomNode, context) {
-		if (node.nodeName == "script" && node.getAttribute("type") === "component-code") {
+		if(node.nodeName == "link") {
+			var head = document.getElementsByTagName("head")[0];
+			var link = document.createElement(node.nodeName);
+			if (typeof node.attributes !== "undefined"
+				&& node.attributes !== null)
+					for ( var i = 0; i < node.attributes.length; i++) {
+						link.setAttribute(node.attributes[i].name, node.attributes[i].value);
+					}
+			
+			head.appendChild(link);
+		} else if (node.nodeName == "script" && node.getAttribute("type") === "component-code") {
 			
 			Component.executeScriptFromPath(parentDomNode, node.getAttribute("source"));
 			var extension = Component.getExtension(context.path);
@@ -240,7 +250,11 @@ Component = function() {
 			Component.executeScript(parentDomNode, node, context.path+extension);
 			return null;
 		} else { // apply the node as it is by traversing its childs
-			var e = document.createElementNS(node.namespaceURI, node.nodeName); // TODO???
+			var e = null;
+			if(node.namespaceURI != null)
+				e = document.createElementNS(node.namespaceURI, node.nodeName);
+			else
+				e = document.createElement(node.nodeName);
 
 			if (id)
 				e.setAttribute('id', id);
@@ -248,8 +262,11 @@ Component = function() {
 			if (typeof node.attributes !== "undefined"
 					&& node.attributes !== null)
 				for ( var i = 0; i < node.attributes.length; i++) {
-					e.setAttributeNS(node.attributes[i].namespaceURI, node.attributes[i].name,
-							node.attributes[i].value);
+					if(node.attributes[i].namespaceURI != null)
+						e.setAttributeNS(node.attributes[i].namespaceURI, node.attributes[i].name,
+								node.attributes[i].value);
+					else
+						e.setAttribute(node.attributes[i].name, node.attributes[i].value);
 				}
 
 			for ( var i = 0; i < node.childNodes.length; i++) {
@@ -273,5 +290,13 @@ Component = function() {
 			return e;
 		}
 	};
+	
+	var scripts = document.getElementsByTagName("script");
+	for(var i in scripts)
+		if(typeof scripts[i].src != 'undefined')
+			if(scripts[i].src.indexOf("component.js") != -1) {
+				var parts = scripts[i].src.split("?");
+				Component[parts[1]]();
+			}
 
 })();
