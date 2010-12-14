@@ -243,7 +243,20 @@ Component = function() {
 			if (node.childNodes.length != 0) // text or cdata
 				var extension = Component.getExtension(context.path);
 				Component.executeScript(element, node, context.path+extension);
-
+				
+			if (typeof node.attributes !== "undefined"
+					&& node.attributes !== null)
+				for ( var i = 0; i < node.attributes.length; i++) {
+					if(node.attributes[i].name == "source" || node.attributes[i].name == "type")
+						continue;
+					
+					if(node.attributes[i].namespaceURI != null)
+						element.setAttributeNS(node.attributes[i].namespaceURI, node.attributes[i].name,
+								node.attributes[i].value);
+					else
+						element.setAttribute(node.attributes[i].name, node.attributes[i].value);
+				}
+				
 			return element;
 		} else if (node.nodeName == "script" && node.getAttribute("source") === null) {
 			var extension = Component.getExtension(context.path);
@@ -296,7 +309,8 @@ Component = function() {
 		if(typeof scripts[i].src != 'undefined')
 			if(scripts[i].src.indexOf("component.js") != -1) {
 				var parts = scripts[i].src.split("?");
-				Component[parts[1]]();
+				if(parts[1])
+					Component[parts[1]]();
 			}
 
 })();
