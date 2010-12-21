@@ -197,7 +197,7 @@ Component = function() {
 		} else
 			content = componentCacheCollection[path + ".js"];
 
-		Compomnent.compileAndExecute(context, content, path+".js");
+		Component.compileAndExecute(context, content, path+".js");
 	};
 
 	Component.wrapToElement = function(node, id, parentDomNode, context) {
