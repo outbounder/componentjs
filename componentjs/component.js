@@ -3,8 +3,6 @@ var Component = {};
 Component.loader = {};
 Component.compiler = {};
 
-console.log('loading component');
-
 (function() {
 
 	var scripts = document.getElementsByTagName("script");
@@ -33,6 +31,4 @@ console.log('loading component');
 				
 				return; //halt further processing of head section as script component.js has been found.
 			}
-	
-	console.log("component loaded");
 })();
