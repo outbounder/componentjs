@@ -2,7 +2,10 @@
 	// private space execution
 	function override(f, g) { return function() { return g.apply(f,arguments); }; };
 	
-	Component.augment = override(Component.augment, function(element) {
+	if(typeof Component.compiler.augment === "undefined")
+		throw new Error("Component.compiler.augment is not found to override. fix the load order");
+	
+	Component.compiler.augment = override(Component.compiler.augment, function(element) {
 		element.$eventHandlers = [];
 		element.on = function(eventName, handler) {
 			for(var i in this.$eventHandlers)
@@ -21,8 +24,10 @@
 		};
 		element.stopListen = function(eventName, handler) {
 			for(var i in this.$eventHandlers)
-				if(this.$eventHandlers[i].name == eventName)
-					this.$eventHandlers[i].splice(i,1); // TODO this may cause issues
+				if(this.$eventHandlers[i].name == eventName) {
+					this.$eventHandlers[i].splice(i,1); 
+					i -= 1;// TODO check,coz this may cause issues
+				}
 		};
 		return this(element);
 	});
