@@ -2,23 +2,23 @@
 	<link rel="stylesheet" href="./panel.css" type="text/css" />
 	
 	<script type="component" source="./partials/title.html">
-		console.log(this);
+		console.log("this is equal to title component "+this);
 	</script>
 	
 	<p>
 		<script>
-			console.log(this);
+			console.log('this is equal to "p" tag '+this);
 		</script>
 		<a href="">
 			<script>
-				console.log(this);
+				console.log('this is equal to "a" tag '+this);
 			</script>
 		</a>
 	</p>
 	
 	<script>
 	// <![CDATA[
-		console.log(this);
+		console.log('this is equal to <div> tag '+this);
 	// ]]>
 	</script>
 	

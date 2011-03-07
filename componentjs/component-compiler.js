@@ -21,7 +21,8 @@
 	};
 	
 	Component.compiler.resolvePath = function(path,context) {
-		console.log(context.path+"|"+path);
+		if(context.verbose)
+			console.log(context.path+"|"+path);
 		return context.path.substr(0,context.path.lastIndexOf("/")+1)+path;
 	};
 	
@@ -98,14 +99,14 @@
 			var path = Component.compiler.resolvePath(node.getAttribute("source"), context);
 			var element = Component.loader.wrapPathToElement({path : path, parent: context});
 			
-			if (typeof parentDomNode !== 'undefined')
+			if (typeof parentDomNode !== 'undefined' && node.getAttribute("id"))
 				parentDomNode[node.getAttribute("id")] = element;
-	
+			
+			Component.compiler.copyAttributes(node,element,['source','type']);
+			
 			// execute any inlined script text or cdata
 			if (node.childNodes.length != 0)  
 				Component.compiler.executeScript(element, node, context);
-				
-			Component.compiler.copyAttributes(node,element,['source','type']);
 				
 			return element;
 			

@@ -1,0 +1,3 @@
+#!/bin/bash
+php ./minifier/minify.php ./componentjs/ ./component.min.js
+php ./minifier/minify.php ./componentjs/ ./examples/component.min.js
