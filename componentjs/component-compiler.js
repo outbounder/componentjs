@@ -32,13 +32,12 @@
 		
 		if(typeof ignore == "undefined")
 			ignore = [];
-		
 		for ( var i = 0; i < src.attributes.length; i++) {
-			var ignore = false;
-			for(var k in ignore) 
-				if(src.attributes[i].name == k)
-					ignore = true;
-			if(ignore)
+			var ignoreAttr = false;
+			for(var k = 0;k<ignore.length; k++)
+				if(src.attributes[i].name == ignore[k])
+					ignoreAttr = true;
+			if(ignoreAttr == true)
 				continue;
 			
 			if(src.attributes[i].namespaceURI != null)

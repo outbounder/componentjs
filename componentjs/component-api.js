@@ -20,6 +20,10 @@
 	
 			if (scriptElement.getAttribute('id'))
 				parentElement[scriptElement.getAttribute('id')] = component;
+			
+			// copy attributes accordingly the component
+			Component.compiler.copyAttributes(scriptElement, component, ['source','type']);
+			
 			parentElement.replaceChild(component, scriptElement);
 		} else {
 			Component.loader.wrapPathToElement({
@@ -31,6 +35,10 @@
 							// give component to the caller to be modified
 							// before rendering
 							async(component);
+							
+							// copy attributes accordingly the component
+							Component.compiler.copyAttributes(scriptElement, component, ['source','type']);
+							
 							// render synch
 							parentElement.replaceChild(component, scriptElement);
 						}
