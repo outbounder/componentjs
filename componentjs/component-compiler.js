@@ -9,7 +9,7 @@
 			var builder = new Function(content);
 			builder.apply(scriptContext);
 		} catch (e) {
-			throw new Error(e.message,context.path);
+			throw new Error(e.message+" @file: "+context.path,context.path);
 		}
 	};
 	
